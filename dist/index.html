@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f7f4" />
+    <meta name="description" content="A responsive academic prototype for an interpretable diabetic retinopathy screening workflow." />
+    <title>RetinaCare · Screening workspace</title>
+    <link rel="icon" type="image/svg+xml" href="assets/retinacare-mark.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <a class="brand" href="#dashboard" data-route="dashboard" aria-label="RetinaCare dashboard">
+          <span class="brand-mark" aria-hidden="true"><img src="assets/retinacare-mark.svg" alt="" /></span>
+          <span><strong>retina<span>care</span></strong><small>SCREENING WORKSPACE</small></span>
+        </a>
+
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="main-nav">
+          <button class="nav-item is-active" type="button" data-route="dashboard"><span class="nav-icon">⌂</span><span>Overview</span></button>
+          <button class="nav-item" type="button" data-route="screenings"><span class="nav-icon">▤</span><span>Screenings</span><span id="navCaseCount" class="nav-count">05</span></button>
+          <button class="nav-item" type="button" data-route="model"><span class="nav-icon">◉</span><span>Model overview</span></button>
+        </nav>
+
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-note">
+          <span class="note-dot"></span>
+          <div><strong>Prototype mode</strong><small>Sample data only</small></div>
+        </div>
+        <div class="sidebar-foot"><span class="shield-icon">✳</span><span>Clinician support concept<br />Not for diagnosis</span></div>
+      </aside>
+
+      <div class="main-column">
+        <header class="topbar">
+          <div class="mobile-brand"><img src="assets/retinacare-mark.svg" alt="" /><strong>retina<span>care</span></strong></div>
+          <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong id="breadcrumbCurrent">Overview</strong></div>
+          <div class="topbar-right">
+            <span class="prototype-pill"><span></span> Prototype · Simulated analysis</span>
+            <div class="avatar" aria-hidden="true">RC</div>
+          </div>
+        </header>
+
+        <main id="mainContent">
+          <section class="view is-visible" data-view="dashboard" aria-labelledby="dashboardTitle">
+            <div class="page-heading dashboard-heading">
+              <div><p class="eyebrow">COMMUNITY SCREENING · DAVAO CITY (DEMO)</p><h1 id="dashboardTitle">Screening overview</h1><p class="page-subtitle">A clear view of retinal screening activity and cases that need a closer look.</p></div>
+              <button class="button button-primary" type="button" data-route="new"><span class="button-plus">＋</span> New screening</button>
+            </div>
+
+            <div class="stat-grid" aria-label="Prototype summary">
+              <article class="stat-card"><div class="stat-top"><span class="stat-icon mint">▤</span><span class="stat-period">DEMO DATA</span></div><strong class="stat-value" id="dashboardCaseCount">05</strong><span class="stat-label">Example screenings</span><span class="stat-foot"><span class="tiny-check">✓</span> Five severity classes represented</span></article>
+              <article class="stat-card"><div class="stat-top"><span class="stat-icon peach">⌕</span><span class="stat-period">WORKFLOW</span></div><strong class="stat-value">2</strong><span class="stat-label">Review steps</span><span class="stat-foot">Image preview <span class="foot-arrow">→</span> sample result</span></article>
+              <article class="stat-card"><div class="stat-top"><span class="stat-icon lilac">✳</span><span class="stat-period">EXPLAINABILITY</span></div><strong class="stat-value">Grad-CAM</strong><span class="stat-label">Visual explanation concept</span><span class="stat-foot">Illustrative heatmap overlay</span></article>
+            </div>
+
+            <div class="dashboard-grid">
+              <section class="panel distribution-panel" aria-labelledby="distributionTitle">
+                <div class="panel-heading"><div><p class="eyebrow">SAMPLE CASE MIX</p><h2 id="distributionTitle">Severity distribution</h2></div><span class="panel-mark">ICDR</span></div>
+                <p class="panel-description">Example cases are spread across the five levels used in the study.</p>
+                <div class="distribution-chart" id="severityDistribution"></div>
+                <div class="chart-foot"><span><i class="chart-key"></i>Sample cases only</span><span id="distributionTotal">5 examples</span></div>
+              </section>
+
+              <section class="panel workflow-panel" aria-labelledby="workflowTitle">
+                <div class="panel-heading"><div><p class="eyebrow">GET STARTED</p><h2 id="workflowTitle">Screening workflow</h2></div><span class="soft-icon">↗</span></div>
+                <div class="workflow-steps">
+                  <div class="workflow-step"><span class="step-number">01</span><div><strong>Add a fundus image</strong><small>Choose an image or use the demo</small></div><span class="step-check">✓</span></div>
+                  <div class="step-connector"></div>
+                  <div class="workflow-step"><span class="step-number">02</span><div><strong>Review an example result</strong><small>Explore the grade and heatmap view</small></div><span class="step-check">✓</span></div>
+                </div>
+                <button class="text-button" type="button" data-route="new">Open screening workspace <span>→</span></button>
+              </section>
+            </div>
+
+            <section class="panel recent-panel" aria-labelledby="recentTitle">
+              <div class="panel-heading recent-heading"><div><p class="eyebrow">DEMONSTRATION RECORDS</p><h2 id="recentTitle">Recent screenings</h2></div><button class="text-button" type="button" data-route="screenings">View all <span>→</span></button></div>
+              <div class="table-wrap"><table><thead><tr><th>CASE REFERENCE</th><th>SEVERITY</th><th>CONFIDENCE</th><th>IMAGE</th><th></th></tr></thead><tbody id="recentTableBody"></tbody></table></div>
+            </section>
+            <footer class="disclaimer-bar"><span class="disclaimer-symbol">i</span><p><strong>Academic prototype.</strong> The model is not connected. Every prediction and heatmap shown here is simulated for interface demonstration and must not guide patient care.</p></footer>
+          </section>
+
+          <section class="view" data-view="screenings" aria-labelledby="screeningsTitle" hidden>
+            <div class="page-heading"><div><p class="eyebrow">DEMO WORKSPACE</p><h1 id="screeningsTitle">Screenings</h1><p class="page-subtitle">Browse example cases and open a sample result.</p></div><button class="button button-primary" type="button" data-route="new"><span class="button-plus">＋</span> New screening</button></div>
+            <section class="panel list-panel">
+              <div class="list-toolbar"><div><h2>All example cases</h2><span class="subtle-copy" id="listCaseCount">5 sample records</span></div><label class="search-box"><span aria-hidden="true">⌕</span><input id="caseSearch" type="search" placeholder="Search reference or grade" aria-label="Search example cases" /></label></div>
+              <div class="table-wrap"><table><thead><tr><th>CASE REFERENCE</th><th>SEVERITY</th><th>CONFIDENCE</th><th>IMAGE SOURCE</th><th>DATE ADDED</th><th></th></tr></thead><tbody id="screeningTableBody"></tbody></table></div>
+              <div id="emptySearch" class="empty-state" hidden><span>⌕</span><strong>No matching example cases</strong><p>Try a different reference or severity level.</p></div>
+            </section>
+            <footer class="disclaimer-bar"><span class="disclaimer-symbol">i</span><p>These records are fictional interface samples. No patient information is stored by this prototype.</p></footer>
+          </section>
+
+          <section class="view" data-view="new" aria-labelledby="newTitle" hidden>
+            <div class="page-heading"><div><p class="eyebrow">SCREENING WORKSPACE</p><h1 id="newTitle">New screening</h1><p class="page-subtitle">Preview an image, then explore a simulated result scenario.</p></div><button class="button button-secondary" type="button" data-route="screenings">Cancel</button></div>
+            <div class="stepper" aria-label="Screening steps"><div class="stepper-item is-current"><span>1</span><div><strong>Image &amp; details</strong><small>Prepare a preview</small></div></div><span class="stepper-line"></span><div class="stepper-item"><span>2</span><div><strong>Result review</strong><small>Explore sample output</small></div></div></div>
+            <div class="intake-grid">
+              <section class="panel intake-panel" aria-labelledby="imageInputTitle">
+                <div class="panel-heading"><div><p class="eyebrow">STEP 1 OF 2</p><h2 id="imageInputTitle">Fundus image</h2></div><span class="required-tag">IMAGE PREVIEW</span></div>
+                <p class="panel-description">Select a retinal image from this device. The file stays in this browser tab and is not uploaded or saved.</p>
+                <div class="image-preview-frame" id="dropZone" tabindex="0" role="button" aria-label="Choose a retinal fundus image or drop one here">
+                  <img id="analysisImage" src="assets/fundus-demo.svg" alt="Illustrative fundus image preview" />
+                  <div class="image-frame-overlay"><span class="frame-corner top-left"></span><span class="frame-corner top-right"></span><span class="frame-corner bottom-left"></span><span class="frame-corner bottom-right"></span></div>
+                  <span id="imagePreviewBadge" class="image-badge">ILLUSTRATION</span>
+                </div>
+                <div class="upload-actions"><label class="button button-secondary upload-button" for="fundusFile"><span>↑</span> Choose image<input id="fundusFile" type="file" accept="image/jpeg,image/png" hidden /></label><button id="useDemoImage" class="button button-quiet" type="button">Use demo image</button></div>
+                <div class="file-meta"><span class="file-type-icon">▧</span><span><strong id="fileName">Illustrative fundus image</strong><small id="fileDetails">SVG preview · not a clinical image</small></span><span class="file-status">Ready</span></div>
+                <div class="form-row"><label for="caseReference">Demo case reference <span>Optional</span></label><input id="caseReference" type="text" maxlength="32" placeholder="e.g. DEMO-006" autocomplete="off" /></div>
+                <div class="form-row"><label for="eyeSide">Eye side</label><select id="eyeSide"><option value="Right eye">Right eye</option><option value="Left eye">Left eye</option><option value="Not specified">Not specified</option></select></div>
+              </section>
+
+              <section class="panel scenario-panel" aria-labelledby="scenarioTitle">
+                <div class="panel-heading"><div><p class="eyebrow">DEMO CONTROLS</p><h2 id="scenarioTitle">Sample result scenario</h2></div><span class="sim-chip"><span></span> SIMULATED</span></div>
+                <div class="simulation-notice"><span class="notice-icon">✳</span><p><strong>No trained model is connected.</strong> Choose a severity to preview how the result screen changes. The sample output is not generated from your image.</p></div>
+                <div class="form-row"><label for="sampleScenario">Example severity</label><select id="sampleScenario"><option value="No DR">No DR</option><option value="Mild NPDR">Mild NPDR</option><option value="Moderate NPDR" selected>Moderate NPDR</option><option value="Severe NPDR">Severe NPDR</option><option value="Proliferative DR">Proliferative DR</option></select><small class="field-help">Based on the five categories named in the thesis.</small></div>
+                <div class="scenario-preview"><div class="scenario-orbit"><span>5</span></div><div><strong>Five-class output</strong><small>No DR · Mild · Moderate · Severe · Proliferative</small></div></div>
+                <button id="runAnalysis" class="button button-primary button-wide" type="button"><span>◉</span> Show sample result <span class="button-arrow">→</span></button>
+                <p class="micro-copy">Illustrative workflow only · not for clinical use</p>
+              </section>
+            </div>
+            <footer class="disclaimer-bar"><span class="disclaimer-symbol">i</span><p>Use a fictional or non-identifiable image for interface review. This prototype does not analyze retinal images and does not provide medical advice.</p></footer>
+          </section>
+
+          <section class="view" data-view="result" aria-labelledby="resultTitle" hidden>
+            <div class="page-heading result-page-heading"><div><button class="back-link" id="backToCaseList" type="button">← <span>Back to screenings</span></button><p class="eyebrow">SAMPLE RESULT · NOT A MODEL PREDICTION</p><h1 id="resultTitle">Screening result</h1><p class="page-subtitle" id="resultReferenceLine">Demo reference · Right eye</p></div><span class="sim-chip result-sim-chip"><span></span> SIMULATED OUTPUT</span></div>
+            <div class="result-grid">
+              <section class="panel result-image-panel" aria-labelledby="heatmapHeading">
+                <div class="panel-heading"><div><p class="eyebrow">VISUAL EXPLANATION CONCEPT</p><h2 id="heatmapHeading">Image &amp; heatmap</h2></div><div class="segmented-control" role="group" aria-label="Image display mode"><button type="button" id="showHeatmap" class="is-selected" aria-pressed="true">Heatmap</button><button type="button" id="showOriginal" aria-pressed="false">Original</button></div></div>
+                <div class="result-fundus-frame" id="resultFundusFrame"><img id="resultImage" src="assets/fundus-demo.svg" alt="Illustrative fundus preview" /><img id="heatmapOverlay" class="heatmap-overlay" src="assets/heatmap-overlay.svg" alt="Illustrative Grad-CAM-style overlay" /></div>
+                <div class="heatmap-caption"><span class="heatmap-dot"></span><span id="heatmapCaption">Illustrative Grad-CAM-style overlay · not generated from this image</span><button class="icon-button" type="button" id="toggleHeatmap" aria-label="Toggle heatmap overlay">◉</button></div>
+                <div class="heat-legend"><span>LOWER INFLUENCE</span><div><i></i><i></i><i></i><i></i></div><span>HIGHER INFLUENCE</span></div>
+              </section>
+
+              <section class="panel result-summary-panel" aria-labelledby="summaryTitle">
+                <div class="summary-topline"><p class="eyebrow">SAMPLE CLASSIFICATION</p><span class="sample-stamp">DEMO</span></div>
+                <h2 id="summaryTitle">Predicted severity</h2>
+                <div id="severityResultBadge" class="severity-result"><span class="severity-result-dot"></span><strong id="severityResultText">Moderate NPDR</strong></div>
+                <div class="confidence-line"><span>Example confidence</span><strong id="confidenceValue">86%</strong></div>
+                <div class="confidence-track"><span id="confidenceTrack"></span></div>
+                <div class="probability-heading"><strong>Five-class distribution</strong><span>Example only</span></div>
+                <div class="probability-list" id="probabilityList"></div>
+                <div class="result-callout"><span class="callout-icon">i</span><p><strong>Requires clinician review.</strong> This simulated output cannot be used for screening decisions, diagnosis, or referral.</p></div>
+                <button class="button button-primary button-wide" type="button" id="startAnother"><span class="button-plus">＋</span> Review another sample</button>
+              </section>
+            </div>
+            <section class="panel concept-panel"><div class="concept-icon">✳</div><div><p class="eyebrow">INTERPRETABILITY NOTE</p><h2>What the heatmap represents</h2><p>The thesis proposes Grad-CAM to highlight image regions that influence a model’s class score. This prototype uses a decorative overlay to show where that explanation would appear; it does not identify confirmed lesions.</p></div></section>
+            <footer class="disclaimer-bar"><span class="disclaimer-symbol">i</span><p>Academic interface prototype. Every score and overlay is simulated; no trained model is connected.</p></footer>
+          </section>
+
+          <section class="view" data-view="model" aria-labelledby="modelTitle" hidden>
+            <div class="page-heading"><div><p class="eyebrow">PROPOSED RESEARCH MODEL</p><h1 id="modelTitle">Model overview</h1><p class="page-subtitle">The thesis pairs two image backbones and adds a visual explanation step.</p></div><button class="button button-secondary" type="button" data-route="new">Try the demo workflow <span class="button-arrow">→</span></button></div>
+            <section class="panel model-flow-panel"><div class="panel-heading"><div><p class="eyebrow">PROPOSED PIPELINE</p><h2>From fundus image to explanation</h2></div><span class="proposed-tag">THESIS CONCEPT</span></div>
+              <div class="model-flow">
+                <div class="flow-node input-node"><span class="flow-icon">◉</span><strong>Fundus image</strong><small>Preprocess · normalize</small></div><span class="flow-connector">→</span>
+                <div class="backbone-stack"><div class="flow-node backbone-node"><span class="backbone-icon inception-icon">I</span><strong>InceptionV3</strong><small>Multi-scale features · 2,048</small></div><div class="flow-node backbone-node"><span class="backbone-icon resnet-icon">R</span><strong>ResNet50</strong><small>Residual features · 2,048</small></div></div><span class="flow-connector">→</span>
+                <div class="flow-node fusion-node"><span class="flow-icon">⤢</span><strong>Feature fusion</strong><small>Concatenate · SE attention</small></div><span class="flow-connector">→</span>
+                <div class="flow-node output-node"><span class="flow-icon">▤</span><strong>Five DR classes</strong><small>Weighted classifier</small></div>
+              </div>
+              <div class="gradcam-band"><span class="gradcam-symbol">✳</span><div><strong>Grad-CAM visual explanation</strong><small>Uses feature-map gradients to form a class-specific heatmap in the proposed model.</small></div><span class="band-arrow">→</span><span class="gradcam-output">Heatmap view</span></div>
+            </section>
+            <div class="model-info-grid"><section class="panel class-panel"><p class="eyebrow">APPLICATION DATA MODEL</p><h2>Reusable base classes</h2><p class="panel-description">The prototype keeps screening details, model output, and case-list behavior in separate objects.</p><div class="class-list"><article><span class="class-mark">SC</span><div><strong>ScreeningCase</strong><small>Reference, eye side, image label, date, and result.</small></div></article><article><span class="class-mark result-mark">PR</span><div><strong>PredictionResult</strong><small>Severity, example confidence, five class scores, and simulation flag.</small></div></article><article><span class="class-mark service-mark">PA</span><div><strong>PrototypeAnalyzer</strong><small>Provides selectable demonstration scenarios; it does not inspect image pixels.</small></div></article><article><span class="class-mark store-mark">SS</span><div><strong>ScreeningStore</strong><small>Adds, retrieves, and searches example screening records in memory.</small></div></article></div></section>
+              <section class="panel classes-panel"><p class="eyebrow">FIVE-LEVEL SEVERITY SCALE</p><h2>Classification categories</h2><p class="panel-description">Categories named in the thesis based on the International Clinical DR Severity Scale.</p><ol class="severity-class-list"><li><span>01</span><strong>No DR</strong><i class="class-dot no-dr"></i></li><li><span>02</span><strong>Mild NPDR</strong><i class="class-dot mild"></i></li><li><span>03</span><strong>Moderate NPDR</strong><i class="class-dot moderate"></i></li><li><span>04</span><strong>Severe NPDR</strong><i class="class-dot severe"></i></li><li><span>05</span><strong>Proliferative DR</strong><i class="class-dot proliferative"></i></li></ol></section></div>
+            <footer class="disclaimer-bar"><span class="disclaimer-symbol">i</span><p>Research concept shown for academic demonstration. The actual model training and validation described in the thesis are not implemented in this prototype.</p></footer>
+          </section>
+        </main>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>
