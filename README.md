@@ -7,12 +7,11 @@ This repository contains two related thesis prototype versions. The **model-back
 ### 1. Download the required files
 
 - Install [Python 3.13 (64-bit)](https://www.python.org/downloads/). If the installer offers **Add python.exe to PATH**, select it.
-- Install [Visual Studio Code](https://code.visualstudio.com/).
-- Download `Hybrid_InceptionV3_ResNet50_SE_best.keras` from the Kaggle notebook's **Output** panel. The file is about 353 MB and is not stored in this repository because it exceeds GitHub's regular 100 MB file limit.
+- Install Git for Windows with Git LFS enabled. The trained 353 MB model is included in this repository using Git LFS.
 
 ### 2. Open the project folder
 
-Clone or download this repository. In VS Code, choose **File → Open Folder**, then open the `retinacheck-model` folder. Copy the downloaded `.keras` file into that same folder, beside `retinacheck_server.py`.
+In PowerShell or Git Bash, run `git lfs install` and clone the repository: `git clone https://github.com/alexandretzy/Prototype-Thesis-1.git`. This downloads the model via Git LFS. In VS Code, choose **File → Open Folder** and open the `retinacheck-model` folder inside the cloned repository. The `.keras` model should already be beside `retinacheck_server.py`; if it is missing, run `git lfs pull` in the repository folder.
 
 ### 3. Install the Python dependencies
 
@@ -54,3 +53,4 @@ The runnable prototype and its full setup guide are in [`retinacheck-model/`](re
 ## Important limitations
 
 This is an academic prototype, not a medical device or diagnostic service. Model scores are not measures of clinical certainty. Grad-CAM highlights regions that influenced a model score; it does not prove that a highlighted region is a lesion. A qualified eye-care professional must interpret retinal images and make clinical decisions.
+

@@ -21,11 +21,10 @@ The browser interface is built with HTML, CSS, and JavaScript. A local Python/Fl
 
 - Windows 10 or 11, 64-bit
 - [Python 3.13 (64-bit)](https://www.python.org/downloads/). During setup, select **Add python.exe to PATH** if offered.
-- [Visual Studio Code](https://code.visualstudio.com/)
-- The trained file `Hybrid_InceptionV3_ResNet50_SE_best.keras` (about 353 MB)
-- Internet for the first dependency installation
+- Git for Windows with Git LFS enabled
+- Internet for cloning the repository and installing dependencies
 
-The model file is not stored in this GitHub repository because it is larger than GitHub's regular 100 MB file limit. Download the `.keras` model from the Kaggle notebook's **Output** panel (or from your secure model storage) and place it in the same folder as `retinacheck_server.py`.
+The trained model is included in this repository using Git Large File Storage (Git LFS). Clone the repository with Git LFS enabled so the actual model file is downloaded; it is about 353 MB. Avoid GitHub's **Download ZIP** option because ZIP downloads may contain only the small LFS pointer rather than the model weights.
 
 The expected folder contents are:
 
@@ -36,13 +35,13 @@ retinacheck-model/
 ├── retinacheck_server.py
 ├── requirements-model.txt
 ├── start-retinacheck.bat
-└── Hybrid_InceptionV3_ResNet50_SE_best.keras  # download separately
+└── Hybrid_InceptionV3_ResNet50_SE_best.keras  # downloaded by Git LFS
 ```
 
 ## Set up in VS Code
 
-1. Download or clone this project, then open its project folder in VS Code (**File → Open Folder**).
-2. Download `Hybrid_InceptionV3_ResNet50_SE_best.keras` from Kaggle and copy it into the project folder beside `retinacheck_server.py`.
+1. Make sure Git for Windows and Git LFS are installed. In PowerShell or Git Bash, run `git lfs install`, then clone the repository: `git clone https://github.com/alexandretzy/Prototype-Thesis-1.git`. This downloads the model via Git LFS. In VS Code, choose **File → Open Folder** and open the `retinacheck-model` folder inside the cloned repository.
+2. Confirm `Hybrid_InceptionV3_ResNet50_SE_best.keras` is present beside `retinacheck_server.py`. If it is missing, install Git LFS and run `git lfs pull` from the repository folder.
 3. In VS Code, open **Terminal → New Terminal**. Create and activate a virtual environment:
 
    ```powershell
@@ -88,7 +87,7 @@ The server preprocesses images to 299 × 299 pixels using the notebook's image p
 
 ## Troubleshooting
 
-- **“Model file not found”**: confirm the `.keras` file is in the same folder as `retinacheck_server.py` and that its filename is exactly `Hybrid_InceptionV3_ResNet50_SE_best.keras`.
+- **“Model file not found”**: confirm Git LFS is installed; run `git lfs pull` from the repository folder and check that the model is beside `retinacheck_server.py` with the exact expected filename.
 - **`py -3.13` is not recognized**: install Python 3.13 (64-bit), then reopen VS Code so it detects the installation.
 - **Package installation fails**: check your internet connection, confirm the virtual environment is active, and retry the `pip install` command.
 - **The page does not open**: confirm the server started successfully and visit `http://127.0.0.1:8000/` yourself.
@@ -100,10 +99,11 @@ The server preprocesses images to 299 × 299 pixels using the notebook's image p
 - `retinacheck_server.py` — Flask server, model inference, preprocessing, and Grad-CAM
 - `requirements-model.txt` — Python packages
 - `start-retinacheck.bat` — Windows helper for first-time setup and starting the server
-- `retinacheck-prototype-overview.docx` — thesis-friendly description of the prototype (if included in the downloaded project)
+- `retinacheck-prototype-overview.docx` — thesis-friendly description of the prototype
 - `sample-retina-*.png` — preview-only sample images; not diagnostic test cases
 
 ## Important note about results
 
 Model scores are outputs of this trained model, not measures of clinical certainty. Performance depends on the training data, image quality, and camera differences. The model and heatmaps should be evaluated by qualified researchers and clinicians before making claims about clinical use or lesion localization.
+
 
