@@ -1,19 +1,17 @@
-# RetinaCare Screening Prototype
+# Prototype Thesis 1 — Diabetic Retinopathy
 
-A responsive, static interface prototype based on the thesis concept for interpretable diabetic retinopathy screening.
+This repository contains two related thesis prototype versions:
 
-## Open it
+## Model-backed RetinaCheck prototype
 
-Open `dist/index.html` in a browser. No install or build step is needed.
+The runnable local prototype is in [`retinacheck-model/`](retinacheck-model/). It connects a browser interface to a Python/Flask server, loads the trained hybrid InceptionV3–ResNet50–SE model, and generates Grad-CAM visualizations. See its [README](retinacheck-model/README.md) for downloads, VS Code setup, dependencies, and run instructions.
 
-## Included workflow
+The trained `.keras` model is not included in this repository because it is about 353 MB and exceeds GitHub's regular 100 MB file limit. The subfolder README explains how to obtain it from Kaggle and where to place it.
 
-- Overview dashboard with the five severity categories and fictional sample cases.
-- Screening list with search and case detail navigation.
-- Local JPG or PNG image preview, plus a selectable sample result scenario.
-- Result view with five example class scores and a Grad-CAM-style overlay toggle.
-- Model overview showing the proposed InceptionV3 and ResNet50 fusion pipeline and the prototype's JavaScript base classes.
+## Static interface demo
 
-## Prototype limits
+The existing frontend demo is in [`dist/`](dist/). It is a static user-interface demonstration and does not run the trained model. Its sample predictions and heatmaps are illustrative only.
 
-This is a frontend demonstration. It has no trained model or backend. Predictions, confidence values, case records, and the heatmap are sample UI data, not outputs from a retinal-image analysis. A chosen image is previewed in the browser tab only; the prototype does not upload it or retain it after the tab is closed. Do not use it for diagnosis, referral, or patient care.
+## Safety
+
+Both versions are academic prototypes, not medical devices or diagnostic services. Predictions and Grad-CAM images are not a substitute for review by an eye-care professional.
