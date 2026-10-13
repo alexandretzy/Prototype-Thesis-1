@@ -85,6 +85,41 @@ On the original Windows setup, you can also double-click `start-retinacheck.bat`
 
 The server preprocesses images to 299 × 299 pixels using the notebook's image preparation workflow, then evaluates the saved model. The prototype performs inference only; it does not train or update the model.
 
+## Generate a Moderate example from Kaggle
+
+The file `moderate-dr-correctly-predicted.png` can be generated from a labeled APTOS validation image. This repository does not include that retinal image because APTOS files are governed by the [Kaggle competition rules](https://www.kaggle.com/competitions/aptos2019-blindness-detection/rules). To generate your own copy, use the same Kaggle notebook and an account that has access to the APTOS competition data:
+
+1. Run the notebook through **10. Validation comparison and training curves** so it defines `val_probabilities` and `y_val`.
+2. Add a code cell immediately after that section and run:
+
+   ```python
+   hybrid_name = next(name for name in val_probabilities if "Hybrid" in name)
+   hybrid_probs = val_probabilities[hybrid_name]
+   hybrid_predictions = hybrid_probs.argmax(axis=1)
+
+   moderate_matches = [
+       i for i in range(len(y_val))
+       if y_val[i] == 2 and hybrid_predictions[i] == 2
+   ]
+
+   if moderate_matches:
+       best_i = max(moderate_matches, key=lambda i: hybrid_probs[i, 2])
+       source_path = Path(val_df.iloc[best_i]["path"])
+       output_path = OUTPUT_DIR / "moderate-dr-correctly-predicted.png"
+       shutil.copy2(source_path, output_path)
+
+       print(f"Saved image: {output_path}")
+       print("True label: Moderate")
+       print(f"Model prediction: {CLASS_NAMES[hybrid_predictions[best_i]]}")
+       print(f"Model confidence: {hybrid_probs[best_i, 2] * 100:.1f}%")
+   else:
+       print("No validation image was both labeled Moderate and predicted Moderate.")
+   ```
+
+3. In Kaggle's **Output** panel, download `outputs/moderate-dr-correctly-predicted.png` and upload it to the prototype.
+
+The image is selected from the validation split because both its dataset label and model prediction are Moderate. The score is the model's confidence, not clinical certainty. Keep APTOS images within the competition rules; do not redistribute them through this public repository.
+
 ## Troubleshooting
 
 - **“Model file not found”**: confirm Git LFS is installed; run `git lfs pull` from the repository folder and check that the model is beside `retinacheck_server.py` with the exact expected filename.

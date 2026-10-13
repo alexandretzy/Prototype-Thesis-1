@@ -50,6 +50,10 @@ The **sample preview** dropdown only displays preview images; those samples are 
 
 The runnable prototype and its full setup guide are in [`retinacheck-model/`](retinacheck-model/). That folder includes the HTML interface, Python/Flask server, dependency list, Windows launcher, sample previews, and the Word overview document. The full folder README also includes troubleshooting steps.
 
+## Generate a Moderate example from Kaggle
+
+The repository does not redistribute APTOS retinal images. To create a Moderate example using your own permitted Kaggle data, follow the instructions in [`retinacheck-model/README.md`](retinacheck-model/README.md#generate-a-moderate-example-from-kaggle) after the notebook's validation comparison has run. The notebook saves the image to `/kaggle/working/outputs/moderate-dr-correctly-predicted.png`; download it from Kaggle's **Output** panel to try in the prototype. A model prediction and score are for demonstration, not clinical certainty.
+
 ## Important limitations
 
 This is an academic prototype, not a medical device or diagnostic service. Model scores are not measures of clinical certainty. Grad-CAM highlights regions that influenced a model score; it does not prove that a highlighted region is a lesion. A qualified eye-care professional must interpret retinal images and make clinical decisions.
