@@ -116,7 +116,7 @@ The file `moderate-dr-correctly-predicted.png` can be generated from a labeled A
        print("No validation image was both labeled Moderate and predicted Moderate.")
    ```
 
-3. In Kaggle's **Output** panel, download `outputs/moderate-dr-correctly-predicted.png` and upload it to the prototype.
+3. If the cell prints a saved path, open Kaggle's **Output** panel, expand `outputs`, download `moderate-dr-correctly-predicted.png`, and upload it to the prototype. If it prints that no validation image matched, no image was saved for that model run.
 
 The image is selected from the validation split because both its dataset label and model prediction are Moderate. The score is the model's confidence, not clinical certainty. Keep APTOS images within the competition rules; do not redistribute them through this public repository.
 

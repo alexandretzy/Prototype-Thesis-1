@@ -52,7 +52,7 @@ The runnable prototype and its full setup guide are in [`retinacheck-model/`](re
 
 ## Generate a Moderate example from Kaggle
 
-The repository does not redistribute APTOS retinal images. To create a Moderate example using your own permitted Kaggle data, follow the instructions in [`retinacheck-model/README.md`](retinacheck-model/README.md#generate-a-moderate-example-from-kaggle) after the notebook's validation comparison has run. The notebook saves the image to `/kaggle/working/outputs/moderate-dr-correctly-predicted.png`; download it from Kaggle's **Output** panel to try in the prototype. A model prediction and score are for demonstration, not clinical certainty.
+The repository does not redistribute APTOS retinal images. Follow the instructions in [`retinacheck-model/README.md`](retinacheck-model/README.md#generate-a-moderate-example-from-kaggle) after the notebook's validation comparison has run. If validation contains an image labeled Moderate that the hybrid model also predicts as Moderate, the notebook saves it to `/kaggle/working/outputs/moderate-dr-correctly-predicted.png`; download it from Kaggle's **Output** panel to try in the prototype. If no image matches, no file is saved. A model prediction and score are for demonstration, not clinical certainty.
 
 ## Important limitations
 
