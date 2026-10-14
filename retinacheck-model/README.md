@@ -1,144 +1,122 @@
 # RetinaCheck Prototype
 
-A small, local research prototype for the thesis **A Hybrid InceptionV3–ResNet50 Model for Interpretable Diabetic Retinopathy Detection**. It lets a user select a retinal fundus image, run the trained model, and view a Grad-CAM heatmap.
+A local research prototype for the thesis **A Hybrid InceptionV3–ResNet50 Model for Interpretable Diabetic Retinopathy Detection**. Upload one retinal fundus image to compare the InceptionV3 baseline with the hybrid InceptionV3–ResNet50 + SE model. The page shows each model's predicted grade and five-class score bars, plus a Grad-CAM overlay for the hybrid model.
 
-> **Research use only.** This prototype is not a medical device and cannot diagnose diabetic retinopathy. A clinician must interpret retinal images and make care decisions. Grad-CAM highlights image regions that influenced a model score; it does not prove that a highlighted region is a lesion.
+> **Research use only.** This is not a medical device and cannot diagnose diabetic retinopathy. Model scores are not clinical certainty. Grad-CAM highlights image regions that influenced the hybrid model score; it does not prove that a highlighted region is a lesion.
 
-## What the model does
+## Models in the comparison
 
-The trained model combines two image-analysis branches:
+- **InceptionV3 baseline:** the simpler reference classifier.
+- **Hybrid InceptionV3–ResNet50 + SE:** combines learned features from InceptionV3 and ResNet50 using feature fusion and squeeze-and-excitation attention.
+- Both models return scores for No DR, Mild, Moderate, Severe, and Proliferative DR. They analyze the same uploaded image so their outputs can be compared directly. They can disagree, and neither result is guaranteed to be correct.
 
-- **InceptionV3** learns visual patterns at different scales.
-- **ResNet50** learns features through a deep network with shortcut connections.
-- **Feature fusion** joins information from the two branches.
-- **SE (squeeze-and-excitation) attention** learns which fused features to emphasize.
-- A final classifier returns scores for five grades: No DR, Mild, Moderate, Severe, and Proliferative DR.
-- **Grad-CAM** is calculated after prediction to visualize influential regions from both branches.
-
-The browser interface is built with HTML, CSS, and JavaScript. A local Python/Flask server loads the `.keras` model, preprocesses the uploaded image with OpenCV, and returns a prediction and heatmap.
+The webpage uses HTML, CSS, and JavaScript. A local Python/Flask server uses TensorFlow/Keras for inference and OpenCV for image preparation.
 
 ## Requirements
 
 - Windows 10 or 11, 64-bit
-- [Python 3.13 (64-bit)](https://www.python.org/downloads/). During setup, select **Add python.exe to PATH** if offered.
-- Git for Windows with Git LFS enabled
-- Internet for cloning the repository and installing dependencies
+- Python 3.13 (64-bit)
+- Git for Windows with Git LFS
+- Internet access for cloning and the first package installation
+- Both model files (downloaded through Git LFS):
+  - `Hybrid_InceptionV3_ResNet50_SE_best.keras` (about 353 MB)
+  - `InceptionV3_baseline_best.keras` (about 496 MB)
 
-The trained model is included in this repository using Git Large File Storage (Git LFS). Clone the repository with Git LFS enabled so the actual model file is downloaded; it is about 353 MB. Avoid GitHub's **Download ZIP** option because ZIP downloads may contain only the small LFS pointer rather than the model weights.
-
-The expected folder contents are:
-
-```text
-retinacheck-model/
-├── README.md
-├── retinacheck-prototype.html
-├── retinacheck_server.py
-├── requirements-model.txt
-├── start-retinacheck.bat
-└── Hybrid_InceptionV3_ResNet50_SE_best.keras  # downloaded by Git LFS
-```
+The models are tracked with Git LFS, approximately 849 MB combined. Install Git LFS before cloning. Avoid GitHub's **Download ZIP** option, which may contain small LFS pointer files instead of model weights.
 
 ## Set up in VS Code
 
-1. Make sure Git for Windows and Git LFS are installed. In PowerShell or Git Bash, run `git lfs install`, then clone the repository: `git clone https://github.com/alexandretzy/Prototype-Thesis-1.git`. This downloads the model via Git LFS. In VS Code, choose **File → Open Folder** and open the `retinacheck-model` folder inside the cloned repository.
-2. Confirm `Hybrid_InceptionV3_ResNet50_SE_best.keras` is present beside `retinacheck_server.py`. If it is missing, install Git LFS and run `git lfs pull` from the repository folder.
-3. In VS Code, open **Terminal → New Terminal**. Create and activate a virtual environment:
+1. In PowerShell or Git Bash, install/enable Git LFS and clone the project:
+
+   ```powershell
+   git lfs install
+   git clone https://github.com/alexandretzy/Prototype-Thesis-1.git
+   ```
+
+2. In VS Code, choose **File → Open Folder** and open `Prototype-Thesis-1/retinacheck-model`. If either `.keras` file is missing or is only a small pointer file, run `git lfs pull` in the repository folder.
+3. Make sure Python 3.13 (64-bit) is installed. In the VS Code terminal, create and activate a virtual environment:
 
    ```powershell
    py -3.13 -m venv .venv
    .\.venv\Scripts\Activate.ps1
    ```
 
-   If PowerShell blocks activation, use Command Prompt in VS Code and run:
+   If PowerShell blocks activation, use Command Prompt and run:
 
    ```bat
-   .venv\Scripts\activate.bat
+   .venv\Scriptsctivate.bat
    ```
 
-4. Install the required packages:
+4. Install the dependencies:
 
    ```powershell
    python -m pip install --upgrade pip
    python -m pip install -r requirements-model.txt
    ```
 
-   TensorFlow is a large download, so the first installation may take several minutes.
+   TensorFlow is a large download, so the first installation can take several minutes. Alternatively, double-click `start-retinacheck.bat`; it creates a private environment and installs the packages on the first run.
 
-## Run the prototype
+## Run and use the prototype
 
-With the virtual environment active, start the server:
+With the virtual environment active, run:
 
 ```powershell
 python retinacheck_server.py
 ```
 
-Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in a browser. Keep the VS Code terminal running while you use the page. To stop the server, focus the terminal and press **Ctrl+C**.
+Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your browser. Keep the terminal window open while using the page. To stop the local server, press **Ctrl+C** in that terminal.
 
-On the original Windows setup, you can also double-click `start-retinacheck.bat`; it creates a local `.venv`, installs the dependencies the first time, and starts the server.
+1. Select a real retinal fundus JPG or PNG with **Choose an image**.
+2. Click **Compare models**. Both trained models analyze that same image automatically; the user does not select a grade.
+3. Compare their predicted grades and class score bars. The hybrid model's Grad-CAM overlay appears below.
 
-## Use the page
+The sample preview dropdown is only for previewing the interface. Those synthetic samples are not analyzed by either model. The prototype preprocesses images to 299 × 299 pixels following the notebook workflow. It performs inference only; it does not train or update either model.
 
-1. Choose a retinal fundus image in JPG or PNG format using the upload control.
-2. Select **Analyze with model**.
-3. Review the predicted grade, model score, and Grad-CAM overlay.
-4. The **sample preview** dropdown only changes the sample preview. Those sample images are not analyzed by the trained model. Use the upload control for an actual model run.
+## Generate a correctly predicted Moderate example in Kaggle
 
-The server preprocesses images to 299 × 299 pixels using the notebook's image preparation workflow, then evaluates the saved model. The prototype performs inference only; it does not train or update the model.
+The APTOS retinal image is not included here. Use your own Kaggle account with access to the competition data and follow its rules. Run the notebook through **10. Validation comparison and training curves** so it defines `val_probabilities` and `y_val`. Add and run this separate code cell after that section:
 
-## Generate a Moderate example from Kaggle
+```python
+hybrid_name = next(name for name in val_probabilities if "Hybrid" in name)
+hybrid_probs = val_probabilities[hybrid_name]
+hybrid_predictions = hybrid_probs.argmax(axis=1)
 
-The file `moderate-dr-correctly-predicted.png` can be generated from a labeled APTOS validation image. This repository does not include that retinal image because APTOS files are governed by the [Kaggle competition rules](https://www.kaggle.com/competitions/aptos2019-blindness-detection/rules). To generate your own copy, use the same Kaggle notebook and an account that has access to the APTOS competition data:
+moderate_matches = [
+    i for i in range(len(y_val))
+    if y_val[i] == 2 and hybrid_predictions[i] == 2
+]
 
-1. Run the notebook through **10. Validation comparison and training curves** so it defines `val_probabilities` and `y_val`.
-2. Add a code cell immediately after that section and run:
+if moderate_matches:
+    best_i = max(moderate_matches, key=lambda i: hybrid_probs[i, 2])
+    source_path = Path(val_df.iloc[best_i]["path"])
+    output_path = OUTPUT_DIR / "moderate-dr-correctly-predicted.png"
+    shutil.copy2(source_path, output_path)
 
-   ```python
-   hybrid_name = next(name for name in val_probabilities if "Hybrid" in name)
-   hybrid_probs = val_probabilities[hybrid_name]
-   hybrid_predictions = hybrid_probs.argmax(axis=1)
+    print(f"Saved image: {output_path}")
+    print("True label: Moderate")
+    print(f"Model prediction: {CLASS_NAMES[hybrid_predictions[best_i]]}")
+    print(f"Model confidence: {hybrid_probs[best_i, 2] * 100:.1f}%")
+else:
+    print("No validation image was both labeled Moderate and predicted Moderate.")
+```
 
-   moderate_matches = [
-       i for i in range(len(y_val))
-       if y_val[i] == 2 and hybrid_predictions[i] == 2
-   ]
-
-   if moderate_matches:
-       best_i = max(moderate_matches, key=lambda i: hybrid_probs[i, 2])
-       source_path = Path(val_df.iloc[best_i]["path"])
-       output_path = OUTPUT_DIR / "moderate-dr-correctly-predicted.png"
-       shutil.copy2(source_path, output_path)
-
-       print(f"Saved image: {output_path}")
-       print("True label: Moderate")
-       print(f"Model prediction: {CLASS_NAMES[hybrid_predictions[best_i]]}")
-       print(f"Model confidence: {hybrid_probs[best_i, 2] * 100:.1f}%")
-   else:
-       print("No validation image was both labeled Moderate and predicted Moderate.")
-   ```
-
-3. If the cell prints a saved path, open Kaggle's **Output** panel, expand `outputs`, download `moderate-dr-correctly-predicted.png`, and upload it to the prototype. If it prints that no validation image matched, no image was saved for that model run.
-
-The image is selected from the validation split because both its dataset label and model prediction are Moderate. The score is the model's confidence, not clinical certainty. Keep APTOS images within the competition rules; do not redistribute them through this public repository.
+If a matching image is found, expand `outputs` in Kaggle's **Output** panel and download `moderate-dr-correctly-predicted.png`. Upload it to the local prototype to compare both model outputs. The image is selected because its dataset label and hybrid prediction are both Moderate; another model version may produce a different result. Follow Kaggle's competition rules and do not redistribute APTOS images through this public repository.
 
 ## Troubleshooting
 
-- **“Model file not found”**: confirm Git LFS is installed; run `git lfs pull` from the repository folder and check that the model is beside `retinacheck_server.py` with the exact expected filename.
-- **`py -3.13` is not recognized**: install Python 3.13 (64-bit), then reopen VS Code so it detects the installation.
-- **Package installation fails**: check your internet connection, confirm the virtual environment is active, and retry the `pip install` command.
-- **The page does not open**: confirm the server started successfully and visit `http://127.0.0.1:8000/` yourself.
-- **Port 8000 is already in use**: close the other local server using that port, then restart this one.
+- **Model file not found:** confirm both `.keras` files are beside `retinacheck_server.py`. If you cloned the project, run `git lfs pull` and check that the files are full-sized, not tiny pointer files.
+- **Python command not found:** install Python 3.13 (64-bit), then reopen VS Code.
+- **Package installation fails:** check your internet connection and retry the pip commands with the virtual environment active.
+- **Page cannot be reached:** ensure the server terminal says it is running at `http://127.0.0.1:8000`, and keep that terminal open.
+- **Port 8000 is already in use:** stop the other local server using that port, then restart this one.
 
 ## Project files
 
-- `retinacheck-prototype.html` — browser interface
-- `retinacheck_server.py` — Flask server, model inference, preprocessing, and Grad-CAM
-- `requirements-model.txt` — Python packages
-- `start-retinacheck.bat` — Windows helper for first-time setup and starting the server
-- `retinacheck-prototype-overview.docx` — thesis-friendly description of the prototype
-- `sample-retina-*.png` — preview-only sample images; not diagnostic test cases
-
-## Important note about results
-
-Model scores are outputs of this trained model, not measures of clinical certainty. Performance depends on the training data, image quality, and camera differences. The model and heatmaps should be evaluated by qualified researchers and clinicians before making claims about clinical use or lesion localization.
-
-
+- `retinacheck-prototype.html` — browser interface and comparison display
+- `retinacheck_server.py` — preprocessing, both model predictions, and hybrid Grad-CAM
+- `Hybrid_InceptionV3_ResNet50_SE_best.keras` — hybrid model (Git LFS)
+- `InceptionV3_baseline_best.keras` — baseline model (Git LFS)
+- `requirements-model.txt` — Python dependencies
+- `start-retinacheck.bat` — Windows first-run setup and launcher
+- `retinacheck-prototype-overview.docx` — thesis-friendly project overview
+- `sample-retina-*.png` — synthetic preview-only images

@@ -3,6 +3,17 @@ setlocal
 set "APP=%~dp0"
 set "PY=%LOCALAPPDATA%\Programs\Python\Python313\python.exe"
 set "VENV=%APP%.venv"
+if not exist "%APP%Hybrid_InceptionV3_ResNet50_SE_best.keras" (
+  echo Missing Hybrid_InceptionV3_ResNet50_SE_best.keras in this folder.
+  pause
+  exit /b 1
+)
+if not exist "%APP%InceptionV3_baseline_best.keras" (
+  echo Missing InceptionV3_baseline_best.keras in this folder.
+  echo If this is a Git clone, open a terminal here and run: git lfs pull
+  pause
+  exit /b 1
+)
 if not exist "%PY%" (
   echo Python 3.13 was not found at its usual install location.
   echo Reopen this window or reinstall Python with PATH enabled.

@@ -12,7 +12,12 @@ from flask import Flask, jsonify, request, send_from_directory
 from tensorflow import keras
 
 ROOT = Path(__file__).resolve().parent
-MODEL_PATH = Path(os.environ.get("RETINACHECK_MODEL", ROOT / "Hybrid_InceptionV3_ResNet50_SE_best.keras"))
+HYBRID_MODEL_PATH = Path(os.environ.get(
+    "RETINACHECK_HYBRID_MODEL", ROOT / "Hybrid_InceptionV3_ResNet50_SE_best.keras"
+))
+BASELINE_MODEL_PATH = Path(os.environ.get(
+    "RETINACHECK_BASELINE_MODEL", ROOT / "InceptionV3_baseline_best.keras"
+))
 IMG_SIZE = 299
 CLASS_NAMES = ["No DR", "Mild", "Moderate", "Severe", "Proliferative"]
 CLAHE_CLIP_LIMIT = 2.0
@@ -69,12 +74,19 @@ def make_gradcam_model(model):
     return keras.Model(model.inputs, outputs)
 
 
-print(f"Loading trained model: {MODEL_PATH}", flush=True)
-if not MODEL_PATH.is_file():
-    raise FileNotFoundError(f"Model file not found: {MODEL_PATH}")
-model = keras.models.load_model(MODEL_PATH, compile=False)
-grad_model = make_gradcam_model(model)
-print("Model loaded; local RetinaCheck server is ready.", flush=True)
+print(f"Loading hybrid model: {HYBRID_MODEL_PATH}", flush=True)
+if not HYBRID_MODEL_PATH.is_file():
+    raise FileNotFoundError(f"Hybrid model file not found: {HYBRID_MODEL_PATH}")
+if not BASELINE_MODEL_PATH.is_file():
+    raise FileNotFoundError(
+        "Baseline model file not found: "
+        f"{BASELINE_MODEL_PATH}. Place InceptionV3_baseline_best.keras beside retinacheck_server.py."
+    )
+hybrid_model = keras.models.load_model(HYBRID_MODEL_PATH, compile=False)
+grad_model = make_gradcam_model(hybrid_model)
+print(f"Loading InceptionV3 baseline: {BASELINE_MODEL_PATH}", flush=True)
+baseline_model = keras.models.load_model(BASELINE_MODEL_PATH, compile=False)
+print("Both models loaded; local RetinaCheck server is ready.", flush=True)
 
 
 def explain(image: np.ndarray):
@@ -115,7 +127,10 @@ def assets(name):
 
 @app.get("/api/health")
 def health():
-    return jsonify({"ready": True, "model": MODEL_PATH.name})
+    return jsonify({
+        "ready": True,
+        "models": [HYBRID_MODEL_PATH.name, BASELINE_MODEL_PATH.name],
+    })
 
 
 @app.post("/api/analyze")
@@ -126,7 +141,25 @@ def analyze():
     try:
         image = preprocess(upload.read())
         grade, probs, overlay = explain(image)
+        baseline_probs = baseline_model(
+            tf.convert_to_tensor(image[None].astype(np.float32)), training=False
+        )[0].numpy().astype(float)
+        baseline_grade = int(np.argmax(baseline_probs))
+        hybrid_result = {
+            "name": "Hybrid InceptionV3–ResNet50 + SE",
+            "grade": CLASS_NAMES[grade],
+            "confidence": round(float(probs[grade]) * 100, 1),
+            "probabilities": [round(float(p) * 100, 1) for p in probs],
+        }
+        baseline_result = {
+            "name": "InceptionV3 baseline",
+            "grade": CLASS_NAMES[baseline_grade],
+            "confidence": round(float(baseline_probs[baseline_grade]) * 100, 1),
+            "probabilities": [round(float(p) * 100, 1) for p in baseline_probs],
+        }
         return jsonify({
+            "models": [hybrid_result, baseline_result],
+            # Keep the original hybrid fields for older prototype clients.
             "grade": CLASS_NAMES[grade],
             "confidence": round(float(probs[grade]) * 100, 1),
             "probabilities": [round(float(p) * 100, 1) for p in probs],
