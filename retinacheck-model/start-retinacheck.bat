@@ -2,7 +2,7 @@
 setlocal
 set "APP=%~dp0"
 set "PY=%LOCALAPPDATA%\Programs\Python\Python313\python.exe"
-set "VENV=%APP%.venv"
+set "VENV=%LOCALAPPDATA%\retinacheck-venv"
 if not exist "%APP%Hybrid_InceptionV3_ResNet50_SE_best.keras" (
   echo Missing Hybrid_InceptionV3_ResNet50_SE_best.keras in this folder.
   pause
