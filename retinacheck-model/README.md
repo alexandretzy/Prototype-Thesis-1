@@ -102,6 +102,52 @@ else:
 
 If a matching image is found, expand `outputs` in Kaggle's **Output** panel and download `moderate-dr-correctly-predicted.png`. Upload it to the local prototype to compare both model outputs. The image is selected because its dataset label and hybrid prediction are both Moderate; another model version may produce a different result. Follow Kaggle's competition rules and do not redistribute APTOS images through this public repository.
 
+## Generate No DR, Mild, Severe, and Proliferative examples
+
+To create four more real examples at the same **3216 × 2136 pixels** as the Moderate image, run this cell after the Kaggle notebook's validation comparison has completed and `val_probabilities`, `y_val`, `val_df`, and `OUTPUT_DIR` are available. Each file is selected only when its validation label matches the hybrid model's prediction. The baseline may predict a different grade; that is useful to show in the side-by-side comparison.
+
+```python
+import cv2
+import numpy as np
+from pathlib import Path
+
+hybrid_name = next(name for name in val_probabilities if "Hybrid" in name)
+hybrid_probs = val_probabilities[hybrid_name]
+hybrid_predictions = hybrid_probs.argmax(axis=1)
+
+examples = [
+    (0, "no-dr-correctly-predicted.png"),
+    (1, "mild-dr-correctly-predicted.png"),
+    (3, "severe-dr-correctly-predicted.png"),
+    (4, "proliferative-dr-correctly-predicted.png"),
+]
+
+for grade, filename in examples:
+    matches = np.flatnonzero((y_val == grade) & (hybrid_predictions == grade))
+    if len(matches) == 0:
+        print(f"No correctly predicted {CLASS_NAMES[grade]} validation image was found.")
+        continue
+
+    best_i = int(max(matches, key=lambda i: hybrid_probs[i, grade]))
+    source_path = Path(val_df.iloc[best_i]["path"])
+    image = cv2.imread(str(source_path), cv2.IMREAD_COLOR)
+    if image is None:
+        print(f"Could not read image: {source_path}")
+        continue
+
+    # Match the Moderate example's pixel dimensions.
+    image = cv2.resize(image, (3216, 2136), interpolation=cv2.INTER_AREA)
+    output_path = OUTPUT_DIR / filename
+    cv2.imwrite(str(output_path), image)
+    print(
+        f"Saved {output_path} | true label: {CLASS_NAMES[grade]} | "
+        f"hybrid prediction: {CLASS_NAMES[hybrid_predictions[best_i]]} | "
+        f"score: {hybrid_probs[best_i, grade] * 100:.1f}%"
+    )
+```
+
+In Kaggle's **Output** panel, expand `outputs` and download the PNG files that were saved. Upload each with **Choose an image** and click **Compare models**. If a grade has no correctly predicted image in the validation split, the cell reports that and does not create a misleading example. Follow the Kaggle competition rules; do not add these APTOS images to the public repository.
+
 ## Troubleshooting
 
 - **Model file not found:** confirm both `.keras` files are beside `retinacheck_server.py`. If you cloned the project, run `git lfs pull` and check that the files are full-sized, not tiny pointer files.

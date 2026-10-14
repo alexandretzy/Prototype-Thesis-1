@@ -22,7 +22,7 @@ The runnable folder includes a Windows launcher, `start-retinacheck.bat`, which 
 
 ## Moderate example
 
-The detailed README explains how to generate `moderate-dr-correctly-predicted.png` from a validation image in Kaggle. The APTOS image itself is not redistributed in this repository; follow the Kaggle competition rules.
+The detailed README explains how to generate the Moderate example and correctly predicted No DR, Mild, Severe, and Proliferative examples from Kaggle validation images, all at matching image dimensions. The APTOS image itself is not redistributed in this repository; follow the Kaggle competition rules.
 
 ## Important limitation
 
