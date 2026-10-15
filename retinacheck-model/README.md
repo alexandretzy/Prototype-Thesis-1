@@ -70,7 +70,7 @@ Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your browser. Keep the 
 2. Click **Compare models**. Both trained models analyze that same image automatically; the user does not select a grade.
 3. Compare their predicted grades and class score bars. The hybrid model's Grad-CAM overlay appears below.
 
-The sample preview dropdown is only for previewing the interface. Those synthetic samples are not analyzed by either model. The prototype preprocesses images to 299 × 299 pixels following the notebook workflow. It performs inference only; it does not train or update either model.
+Choose a real retinal fundus image with **Choose an image** to run inference. The prototype preprocesses images to 299 × 299 pixels following the notebook workflow. It performs inference only; it does not train or update either model.
 
 ## Generate a correctly predicted Moderate example in Kaggle
 
